@@ -51,25 +51,21 @@
 (defn- mark-sql-statement-ends [sql]
   (apply str
     (lex sql
-      (quoted-string \') #(.group %)
-      (quoted-string \") #(.group %)
-      (quoted-string \`) #(.group %)
-      #"[^'\"`;]+"       #(.group %)
-      #";"               sql-end-marker)))
+      (quoted-string \')            #(.group %)
+      (quoted-string \")            #(.group %)
+      (quoted-string \`)            #(.group %)
+      #"--[^\n]+\n?"                " "
+      #"(?:[^'\"`;-]|-(?:[^-]|$))+" #(.group %)
+      #";"                          sql-end-marker)))
 
 (defn- split-sql [sql]
   (-> (mark-sql-statement-ends sql)
       (str/split (re-pattern sql-end-marker))))
 
-(defn- remove-comments [sql]
-  (str/replace sql #"--[^\n]+\n?" " "))
-
 (defn sql-statements
   "Split a SQL script into its component statements."
   [sql]
-  (->> sql
-       remove-comments
-       split-sql
+  (->> (split-sql sql)
        (map str/trim)
        (remove str/blank?)))
 

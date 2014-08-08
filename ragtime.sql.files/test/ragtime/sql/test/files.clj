@@ -19,15 +19,22 @@
 
 (deftest test-sql-statements
   (are [x y] (= (sql-statements x) y)
-    "foo;bar"    ["foo" "bar"]
-    "foo;; bar;" ["foo" "bar"]
-    "'foo;bar'"  ["'foo;bar'"]
-    "`foo;bar`"  ["`foo;bar`"]
-    "\"fo;ba\""  ["\"fo;ba\""]
-    "'a;b' c; d" ["'a;b' c" "d"]
-    "a;\nb\n"    ["a" "b"]
-    "a;\n--b;c"  ["a"]
-    "a;\n--b\nc" ["a" "c"]
+    "foo;bar"          ["foo" "bar"]
+    "foo;; bar;"       ["foo" "bar"]
+    "'foo;bar'"        ["'foo;bar'"]
+    "`foo;bar`"        ["`foo;bar`"]
+    "\"fo;ba\""        ["\"fo;ba\""]
+    "'a;b' c; d"       ["'a;b' c" "d"]
+    "-"                ["-"]
+    "--"               []
+    "a-b"              ["a-b"]
+    "a;-b;c-d;e-"      ["a" "-b" "c-d" "e-"]
+    "a'-'-'-';b"       ["a'-'-'-'" "b"]
+    "a;\nb\n"          ["a" "b"]
+    "a;\n--b;c"        ["a"]
+    "a;\n--b\nc"       ["a" "c"]
+    "a'--';b"          ["a'--'" "b"]
+    "a'b--c'--\"\n;d"  ["a'b--c'" "d"]
     "a;\nb--'c\nd; e;" ["a" "b d" "e"]))
 
 (deftest test-migrations
