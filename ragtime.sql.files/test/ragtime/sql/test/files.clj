@@ -24,7 +24,11 @@
     "'foo;bar'"  ["'foo;bar'"]
     "`foo;bar`"  ["`foo;bar`"]
     "\"fo;ba\""  ["\"fo;ba\""]
-    "'a;b' c; d" ["'a;b' c" "d"]))
+    "'a;b' c; d" ["'a;b' c" "d"]
+    "a;\nb\n"    ["a" "b"]
+    "a;\n--b;c"  ["a"]
+    "a;\n--b\nc" ["a" "c"]
+    "a;\nb--'c\nd; e;" ["a" "b d" "e"]))
 
 (deftest test-migrations
   (testing "no migration directory"

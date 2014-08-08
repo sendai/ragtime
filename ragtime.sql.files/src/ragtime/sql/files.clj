@@ -61,10 +61,15 @@
   (-> (mark-sql-statement-ends sql)
       (str/split (re-pattern sql-end-marker))))
 
+(defn- remove-comments [sql]
+  (str/replace sql #"--[^\n]+\n?" " "))
+
 (defn sql-statements
   "Split a SQL script into its component statements."
   [sql]
-  (->> (split-sql sql)
+  (->> sql
+       remove-comments
+       split-sql
        (map str/trim)
        (remove str/blank?)))
 
