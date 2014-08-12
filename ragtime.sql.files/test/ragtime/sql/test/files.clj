@@ -27,6 +27,7 @@
     "'a;b' c; d"       ["'a;b' c" "d"]
     "-"                ["-"]
     "--"               []
+    "--\na"            ["a"]
     "a-b"              ["a-b"]
     "a;-b;c-d;e-"      ["a" "-b" "c-d" "e-"]
     "a'-'-'-';b"       ["a'-'-'-'" "b"]
@@ -35,7 +36,7 @@
     "a;\n--b\nc"       ["a" "c"]
     "a'--';b"          ["a'--'" "b"]
     "a'b--c'--\"\n;d"  ["a'b--c'" "d"]
-    "a;\nb--'c\nd; e;" ["a" "b d" "e"]))
+    "a;\nb--'c\nd; e;" ["a" "b\nd" "e"]))
 
 (deftest test-migrations
   (testing "no migration directory"

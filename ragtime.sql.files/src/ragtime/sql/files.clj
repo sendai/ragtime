@@ -54,7 +54,7 @@
       (quoted-string \')            #(.group %)
       (quoted-string \")            #(.group %)
       (quoted-string \`)            #(.group %)
-      #"--[^\n]+\n?"                " "
+      #"--[^\n]*\n?"                "\n"
       #"(?:[^'\"`;-]|-(?:[^-]|$))+" #(.group %)
       #";"                          sql-end-marker)))
 
@@ -84,8 +84,12 @@
        (try
          (if (postgres? (sql/connection))
            (sql/do-commands (slurp file))
-           (doseq [s (sql-statements (slurp file))]
-             (sql/do-commands s)))
+           (let [sql (slurp file)
+                 statements (sql-statements sql)]
+             (when (and (empty? statements) (not (str/blank? sql)))
+               (println "Warning: migration is empty"))
+             (doseq [s statements]
+                    (sql/do-commands s))))
          (catch java.sql.BatchUpdateException e
            (print-next-ex-trace e)
            (throw e))
